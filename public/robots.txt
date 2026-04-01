@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /super-admin/
+Disallow: /parent/dashboard
+Disallow: /school-admin/
+Disallow: /security/
+Disallow: /assignee/
+
+Sitemap: https://yourdomain.com/sitemap.xml
