@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { DataProvider } from '@/contexts/DataContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'sonner';
@@ -23,6 +23,12 @@ import SuperAdminDashboard from '@/pages/super-admin/SuperAdminDashboard';
 import SecurityManagement from '@/pages/school-admin/SecurityManagement';
 import SecurityLogin from '@/pages/security/SecurityLogin';
 import SecurityDashboard from '@/pages/security/SecurityDashboard';
+
+// Redirect component for /parent/login/:schoolCode → /school/:schoolCode/parent-login
+function ParentLoginSchoolCodeRedirect() {
+  const { schoolCode } = useParams();
+  return <Navigate to={`/school/${schoolCode}/parent-login`} replace />;
+}
 
 // Clocka - Premium School Attendance SaaS Platform
 export default function App() {
@@ -62,6 +68,9 @@ export default function App() {
             {/* Security Routes */}
             <Route path="/school/:schoolCode/security-login" element={<SecurityLogin />} />
             <Route path="/security/dashboard" element={<SecurityDashboard />} />
+            
+            {/* Parent Portal Redirect - handles /parent/login/:schoolCode links */}
+            <Route path="/parent/login/:schoolCode" element={<ParentLoginSchoolCodeRedirect />} />
             
             {/* Fallback - Redirect to Landing */}
             <Route path="*" element={<Navigate to="/" replace />} />

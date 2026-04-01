@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/utils/supabaseClient';
 import { School, ArrowLeft, Eye, EyeOff, Shield, Zap, Baby, Heart, GraduationCap, Star, Lock, Mail } from 'lucide-react';
 import clockaLogo from 'figma:asset/c6c92aab0f7d59ff7afbce0ebd8b122d9715bdde.png';
 
@@ -8,6 +9,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { schoolLogin } = useAuth();
@@ -18,6 +20,7 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     
     // Figma Preview Quick Login - bypass authentication
     if (isInFigmaPreview) {
@@ -37,21 +40,21 @@ export default function AdminLogin() {
       return;
     }
     
-    // Try Supabase first
+    // Try Supabase using the shared singleton client (avoids multiple GoTrueClient instances)
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const { projectId, publicAnonKey } = await import('@/utils/supabase/info');
-      const supabaseClient = createClient(
-        `https://${projectId}.supabase.co`,
-        publicAnonKey
-      );
-      
-      const { data: school } = await supabaseClient
+      const { data: school, error: queryError } = await supabase
         .from('schools')
         .select('*')
         .eq('email', email)
         .eq('admin_password', password)
         .maybeSingle();
+      
+      if (queryError) {
+        console.error('Supabase login query error:', queryError.message, queryError.code);
+        setError('Connection error. Please try again.');
+        setLoading(false);
+        return;
+      }
       
       if (school) {
         const schoolObj = {
@@ -71,10 +74,11 @@ export default function AdminLogin() {
         sessionStorage.setItem('schoolCode', school.school_code);
         localStorage.setItem('schoolCode', school.school_code);
         navigate('/admin/dashboard');
+        setLoading(false);
         return;
       }
     } catch (err) {
-      console.warn('Supabase login check failed, falling back to localStorage');
+      console.error('Supabase login failed:', err);
     }
     
     // Fallback: check localStorage
@@ -89,6 +93,7 @@ export default function AdminLogin() {
     } else {
       setError('Invalid credentials. Please check your email and password.');
     }
+    setLoading(false);
   };
 
   return (

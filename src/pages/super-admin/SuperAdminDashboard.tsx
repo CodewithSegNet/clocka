@@ -186,7 +186,7 @@ export default function SuperAdminDashboard() {
         email,
         phone,
         username,
-        password,
+        adminPassword: password,
         status: 'active',
         logo: ''
       };
@@ -289,7 +289,7 @@ export default function SuperAdminDashboard() {
       // Update password in Supabase
       await supabaseApi.saveSchoolInfo({
         schoolCode: selectedSchool.schoolCode,
-        password: resetPasswordInfo.newPassword
+        adminPassword: resetPasswordInfo.newPassword
       });
 
       toast.success('Password reset successfully!');
@@ -631,14 +631,14 @@ export default function SuperAdminDashboard() {
                                 PARENT PORTAL LINK
                               </p>
                               <p className="text-sm font-mono text-purple-900 truncate">
-                                {window.location.origin}/parent/login/{school.schoolCode}
+                                {window.location.origin}/school/{school.schoolCode}/parent-login
                               </p>
                             </div>
                             <button
-                              onClick={() => copyToClipboard(`${window.location.origin}/parent/login/${school.schoolCode}`, 'Parent Link')}
+                              onClick={() => copyToClipboard(`${window.location.origin}/school/${school.schoolCode}/parent-login`, 'Parent Link')}
                               className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
                             >
-                              {copiedCode === `${window.location.origin}/parent/login/${school.schoolCode}` ? (
+                              {copiedCode === `${window.location.origin}/school/${school.schoolCode}/parent-login` ? (
                                 <>
                                   <Check className="w-4 h-4" />
                                   Copied
@@ -966,13 +966,13 @@ export default function SuperAdminDashboard() {
                     <p className="text-xs text-purple-700 mb-2 font-semibold">PARENT PORTAL LINK</p>
                     <div className="flex items-center gap-2">
                       <p className="flex-1 text-sm font-mono text-purple-900 truncate">
-                        {window.location.origin}/parent/login/{newlyCreatedSchool.schoolCode}
+                        {window.location.origin}/school/{newlyCreatedSchool.schoolCode}/parent-login
                       </p>
                       <button
-                        onClick={() => copyToClipboard(`${window.location.origin}/parent/login/${newlyCreatedSchool.schoolCode}`, 'Parent Link')}
+                        onClick={() => copyToClipboard(`${window.location.origin}/school/${newlyCreatedSchool.schoolCode}/parent-login`, 'Parent Link')}
                         className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium whitespace-nowrap"
                       >
-                        {copiedCode === `${window.location.origin}/parent/login/${newlyCreatedSchool.schoolCode}` ? 'Copied!' : 'Copy'}
+                        {copiedCode === `${window.location.origin}/school/${newlyCreatedSchool.schoolCode}/parent-login` ? 'Copied!' : 'Copy'}
                       </button>
                     </div>
                   </div>
