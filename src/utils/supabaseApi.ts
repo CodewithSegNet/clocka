@@ -378,6 +378,7 @@ function mapSchoolFromDB(row: any) {
     adminPassword: row.admin_password,
     settings: row.settings || {},
     parentPortalAppearance: row.parent_portal_appearance || {},
+    status: row.status || 'active',
   };
 }
 
